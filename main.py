@@ -125,20 +125,23 @@ def Add_URL(url: str):
 
     return "succuss"
 
-@app.put("/check-status/{url}")
+@app.post("/check-status/{url}")
 def Update_status_of_url(url: str):
     conn = get_Conn()
     cur = getCur(conn)
 
     status = Check_status_of_url(url)
     last_checked = datetime.datetime.now()
-
     Update_Status(conn,cur,url,status,last_checked)
 
+    conn.commit()
+    cur.close()
+    conn.close()
     return {"status: " : status, "last checked: " : last_checked}
 
 def Check_status_of_url(url):
     try:
+        #status = await requests.get(url)
         status = requests.get(url)
         print("status is: " + (str)(status))
         return status
@@ -147,14 +150,40 @@ def Check_status_of_url(url):
         return None
 
 def Update_Status (conn,cur,url,status,time_checked):
+    if (status != None):
+        status = (str)(status)
     update_script = '''update site set status = %s where url = %s '''
     update_record = (status,url)
     cur.execute(update_script, update_record)
-    conn.commit()
+
 
     update_script = '''update site set lastchecked = %s where url = %s '''
     update_record = (time_checked, url)
     cur.execute(update_script, update_record)
     conn.commit()
+
+
+@app.post("/check-status/All")
+def API_Update_All_URL():
+    conn = get_Conn()
+    cur = getCur(conn)
+    cur.execute('''SELECT * FROM site''')
+    Alldata = cur.fetchall()
+    for data in Alldata:
+        url = data[0]
+
+        status = Check_status_of_url(url)
+        last_checked = datetime.datetime.now()
+        Update_Status(conn, cur, url, status, last_checked)
+
+        conn.commit()
+
+    cur.execute('''SELECT * FROM site''')
+    AllNewdata = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return AllNewdata
 
 
