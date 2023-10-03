@@ -39,7 +39,7 @@ def Update_All_URL_API():
     print(requests.post(request).json())
     Timer(60,Update_All_URL_API).start()
 
-test
+
 #Update_All_URL_API()
 
 
