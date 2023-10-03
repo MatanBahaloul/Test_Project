@@ -24,14 +24,14 @@ def Update_All_URL():
         url = data[0]
         url = url.replace("/", "'", 255)
         request = "http://127.0.0.1:8000/check-status/" + url
-        print(requests.post(request).json())
+        #print(requests.post(request).json())
         print("updated: " + url)
 
-    #Timer(60,Update_All_URL).start()
+    Timer(60,Update_All_URL).start()
 
+#bonos
 
-
-#Update_All_URL()
+Update_All_URL()
 
 #does update the database but it's not realy a separate function
 def Update_All_URL_API():

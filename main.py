@@ -129,7 +129,7 @@ def Add_URL(url: str):
 def Update_status_of_url(url: str):
     conn = get_Conn()
     cur = getCur(conn)
-
+    url = url.replace("'", "/", 255)
     status = Check_status_of_url(url)
     last_checked = datetime.datetime.now()
     Update_Status(conn,cur,url,status,last_checked)
